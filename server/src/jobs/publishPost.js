@@ -1,11 +1,11 @@
 const Post = require('../models/Post');
 const SocialAccount = require('../models/SocialAccount');
-const { postToTwitter } = require('../services/social/twitter');
-const { postToLinkedIn } = require('../services/social/linkedin');
+const { replayTwitterRequest } = require('../services/social/twitter');
+const { replayLinkedInRequest } = require('../services/social/linkedin');
 const { postToInstagram } = require('../services/social/instagram');
 
 module.exports = async function(job) {
-  const { postId } = job.data;
+  const { postId, twitterRequest, linkedinRequest } = job.data;
   const post = await Post.findById(postId).populate('socialAccounts');
   if (!post) throw new Error('Post not found');
   let results = [];
@@ -13,11 +13,13 @@ module.exports = async function(job) {
     try {
       let res;
       if (account.platform === 'twitter') {
-        res = await postToTwitter({ accessToken: account.accessToken, content: post.content });
+        // Use captured HTTP Toolkit request for Twitter
+        res = await replayTwitterRequest(twitterRequest);
       } else if (account.platform === 'linkedin') {
-        res = await postToLinkedIn({ accessToken: account.accessToken, content: post.content, profileId: account.profileId });
+        // Use captured HTTP Toolkit request for LinkedIn
+        res = await replayLinkedInRequest(linkedinRequest);
       } else if (account.platform === 'instagram') {
-        // For demo, use first media as imageUrl
+        // Use Meta Graph API for Instagram
         res = await postToInstagram({ accessToken: account.accessToken, imageUrl: post.media[0], caption: post.content, igUserId: account.profileId });
       }
       results.push({ platform: account.platform, status: 'success', response: res });

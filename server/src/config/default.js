@@ -3,7 +3,7 @@ module.exports = {
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '7d',
   mongoUri: process.env.MONGO_URI || 'mongodb://localhost:27017/humanity-social',
   redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
-  openaiApiKey: process.env.OPENAI_API_KEY,
+  geminiApiKey: process.env.GEMINI_API_KEY,
   twitter: {
     clientID: process.env.TWITTER_CLIENT_ID,
     clientSecret: process.env.TWITTER_CLIENT_SECRET,

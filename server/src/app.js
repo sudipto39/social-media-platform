@@ -13,6 +13,7 @@ const authRoutes = require('./routes/auth');
 const aiRoutes = require('./routes/ai');
 const postRoutes = require('./routes/post');
 const socialRoutes = require('./routes/social');
+const webhookRoutes = require('./routes/webhooks');
 
 const app = express();
 
@@ -45,9 +46,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/social', socialRoutes);
+app.use('/webhooks', webhookRoutes);
 
-// 404 handler
-app.all('*', (req, res, next) => {
+// 404 handler (Express 5 compatible)
+app.use((req, res) => {
   res.status(404).json({ status: 'fail', message: `Can't find ${req.originalUrl} on this server!` });
 });
 

@@ -1,10 +1,9 @@
 const axios = require('axios');
 const AppError = require('../../utils/appError');
 
-// Post to Instagram (image or video)
+// Post to Instagram using Meta Graph API (official)
 async function postToInstagram({ accessToken, imageUrl, caption, igUserId }) {
   try {
-    // Instagram Graph API: create media object, then publish
     // 1. Create media object
     const mediaRes = await axios.post(
       `https://graph.facebook.com/v18.0/${igUserId}/media`,
@@ -17,14 +16,10 @@ async function postToInstagram({ accessToken, imageUrl, caption, igUserId }) {
     );
     return publishRes.data;
   } catch (err) {
-    throw new AppError('Instagram posting failed', 500);
+    throw new AppError('Instagram posting failed: ' + (err.response?.data?.error?.message || err.message), 500);
   }
 }
 
-// Placeholder for token refresh logic
-async function refreshInstagramToken(refreshToken) {
-  // Implement OAuth2 token refresh if needed
-  return null;
-}
+// Meta Graph API handles token refresh via long-lived tokens (not implemented here)
 
-module.exports = { postToInstagram, refreshInstagramToken };
+module.exports = { postToInstagram };
